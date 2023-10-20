@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+app.use(express.json());
 let persons = [
   {
     id: 1,
@@ -65,6 +65,14 @@ app.get("/info", (request, response) => {
 
 app.get("/api/persons", (request, response) => {
   response.json(persons);
+});
+
+app.post("/api/persons", (request, response) => {
+  const person = request.body;
+  person.id = Math.floor(Math.random() * 5000000);
+  persons.concat(person);
+  console.log(person);
+  response.status(201).json(person).end();
 });
 
 const PORT = 3001;
