@@ -1,6 +1,9 @@
 const express = require("express");
+const morgan = require("morgan");
+morgan.token('body', function (req, res) { if(req.method === "POST")return JSON.stringify(req.body) })
 const app = express();
 app.use(express.json());
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body", "default"));
 let persons = [
   {
     id: 1,
@@ -31,12 +34,9 @@ app.get("/", (request, response) => {
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   const person = persons.filter((person) => person.id === id);
-  if(person)
-  {
+  if (person) {
     response.json(person);
-
-  }else
-  {
+  } else {
     response.status(404).end();
   }
 });
@@ -44,12 +44,9 @@ app.get("/api/persons/:id", (request, response) => {
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   const person = persons.find((person) => person.id !== id);
-  if(person)
-  {
+  if (person) {
     response.status(204).end();
-
-  }else
-  {
+  } else {
     response.status(404).end();
   }
 });
@@ -68,17 +65,19 @@ app.get("/api/persons", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
-  if(!request.body || !request.body.name| !request.body.number)
-  {
-    return response.status(400).json({ 
-      error: 'content missing' 
-    })
+  if (!request.body || !request.body.name | !request.body.number) {
+    return response.status(400).json({
+      error: "content missing",
+    });
   }
-  if(persons.find((person)=>{if(person.name === request.body.name) return person}))
-  {
-    return response.status(400).json({ 
-      error: 'Name must be unique' 
+  if (
+    persons.find((person) => {
+      if (person.name === request.body.name) return person;
     })
+  ) {
+    return response.status(400).json({
+      error: "Name must be unique",
+    });
   }
   const person = request.body;
   person.id = Math.floor(Math.random() * 5000000);
