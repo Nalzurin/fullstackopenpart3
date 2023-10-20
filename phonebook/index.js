@@ -68,11 +68,23 @@ app.get("/api/persons", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
+  if(!request.body || !request.body.name| !request.body.number)
+  {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
+  if(persons.find((person)=>{if(person.name === request.body.name) return person}))
+  {
+    return response.status(400).json({ 
+      error: 'Name must be unique' 
+    })
+  }
   const person = request.body;
   person.id = Math.floor(Math.random() * 5000000);
   persons.concat(person);
   console.log(person);
-  response.status(201).json(person).end();
+  response.status(201).json(person);
 });
 
 const PORT = 3001;
