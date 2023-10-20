@@ -28,6 +28,12 @@ app.get('/', (request, response) => {
   response.send('<h1>Hi!, please go to <a href="/api/persons">here</a></h1>')
 })
 
+app.get('/info', (request, response) => {
+    const d = new Date();
+    response.send(`<h1>Hi!</h1><p>Phonebook has ${persons.length} entries</p><p>${d.toUTCString()}</p>`)
+  })
+  
+
 app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
